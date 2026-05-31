@@ -2,6 +2,8 @@ import { FilterRule, MatchContext } from "./types";
 
 function targetMatches(rule: FilterRule, ctx: MatchContext): boolean {
     switch (rule.targetType) {
+        case "all":
+            return ctx.guildId !== null;
         case "user":
             return ctx.authorId === rule.targetId;
         case "channel":

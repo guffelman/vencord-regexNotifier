@@ -5,6 +5,7 @@ import { settings } from "./settings";
 import { FilterRule, TargetType } from "./types";
 
 const TARGET_OPTIONS: { label: string; value: TargetType; }[] = [
+    { label: "All Servers", value: "all" },
     { label: "Server", value: "guild" },
     { label: "Channel", value: "channel" },
     { label: "User", value: "user" },
@@ -22,11 +23,12 @@ function newRule(): FilterRule {
     };
 }
 
-function CommitInput({ initialValue, placeholder, onCommit, validate }: {
+function CommitInput({ initialValue, placeholder, onCommit, validate, disabled }: {
     initialValue: string;
     placeholder: string;
     onCommit(value: string): void;
     validate?(value: string): string | undefined;
+    disabled?: boolean;
 }) {
     const [value, setValue] = useState(initialValue);
     return (
@@ -34,6 +36,7 @@ function CommitInput({ initialValue, placeholder, onCommit, validate }: {
             placeholder={placeholder}
             value={value}
             spellCheck={false}
+            disabled={disabled}
             error={validate?.(value)}
             onChange={setValue}
             onBlur={() => value !== initialValue && onCommit(value)}
@@ -100,9 +103,10 @@ export function FiltersManager() {
                         </div>
                         <div style={{ flex: 1 }}>
                             <CommitInput
-                                placeholder="Target ID (server/channel/user snowflake)"
+                                placeholder={rule.targetType === "all" ? "Applies to every server" : "Target ID (server/channel/user snowflake)"}
                                 initialValue={rule.targetId}
                                 onCommit={v => (rules[index].targetId = v.trim())}
+                                disabled={rule.targetType === "all"}
                             />
                         </div>
                     </div>

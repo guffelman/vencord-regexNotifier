@@ -1,4 +1,4 @@
-export type TargetType = "guild" | "channel" | "user";
+export type TargetType = "all" | "guild" | "channel" | "user";
 
 export interface FilterRule {
     id: string;

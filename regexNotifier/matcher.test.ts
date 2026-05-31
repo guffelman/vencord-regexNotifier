@@ -32,6 +32,16 @@ describe("findMatches", () => {
         expect(findMatches([rule({ targetId: "999" })], ctx)).toHaveLength(0);
     });
 
+    it("matches an all-servers rule for any guild message", () => {
+        const r = rule({ targetType: "all", targetId: "" });
+        expect(findMatches([r], ctx)).toHaveLength(1);
+    });
+
+    it("does not match an all-servers rule in a DM (null guildId)", () => {
+        const r = rule({ targetType: "all", targetId: "" });
+        expect(findMatches([r], { ...ctx, guildId: null })).toHaveLength(0);
+    });
+
     it("matches a channel rule by channelId", () => {
         const r = rule({ targetType: "channel", targetId: "456" });
         expect(findMatches([r], ctx)).toHaveLength(1);
