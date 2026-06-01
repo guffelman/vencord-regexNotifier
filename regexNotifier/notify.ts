@@ -3,6 +3,7 @@ import { findByPropsLazy } from "@webpack";
 import { NavigationRouter } from "@webpack/common";
 
 import { settings } from "./settings";
+import * as inbox from "./store";
 import { FilterRule } from "./types";
 
 const SoundUtils = findByPropsLazy("playSound");
@@ -26,6 +27,17 @@ export function notifyMatch({ rule, content, authorTag, channelId, guildId, mess
     if (settings.store.logToConsole) {
         console.log(`[RegexNotifier] rule "${rule.label || rule.pattern}" matched message from ${authorTag}: ${content}`);
     }
+
+    inbox.addEntry({
+        id: crypto.randomUUID(),
+        ruleLabel: rule.label || rule.pattern,
+        authorTag,
+        content,
+        channelId,
+        guildId,
+        messageId,
+        timestamp: Date.now(),
+    });
 
     showNotification({
         title,

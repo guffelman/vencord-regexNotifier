@@ -16,3 +16,14 @@ export interface MatchContext {
     channelId: string;
     guildId: string | null;
 }
+
+export interface SavedNotification {
+    id: string;
+    ruleLabel: string;
+    authorTag: string;
+    content: string;
+    channelId: string;
+    guildId: string | null;
+    messageId: string;
+    timestamp: number;
+}

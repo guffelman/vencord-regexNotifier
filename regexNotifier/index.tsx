@@ -1,12 +1,16 @@
 import { findByPropsLazy } from "@webpack";
 import { ChannelStore, FluxDispatcher, UserStore } from "@webpack/common";
 import definePlugin from "@utils/types";
+import ErrorBoundary from "@components/ErrorBoundary";
+import type { PropsWithChildren } from "react";
 
 import { findMatches } from "./matcher";
 import { notifyMatch } from "./notify";
 import { getRules, settings } from "./settings";
 import { MatchContext } from "./types";
 import { channelContextPatch, guildContextPatch, userContextPatch } from "./contextMenu";
+import { InboxButton } from "./InboxButton";
+import * as inbox from "./store";
 
 const MuteStore = findByPropsLazy("isChannelMuted", "isGuildOrCategoryOrChannelMuted");
 
@@ -76,7 +80,29 @@ export default definePlugin({
         "guild-context": guildContextPatch,
     },
 
+    patches: [
+        {
+            find: '?"BACK_FORWARD_NAVIGATION":',
+            replacement: {
+                match: /(trailing:.{0,50}?)\i\.Fragment,(?=\{children:\[)/,
+                replace: "$1$self.TrailingWrapper,"
+            }
+        }
+    ],
+
+    TrailingWrapper({ children }: PropsWithChildren) {
+        return (
+            <>
+                {children}
+                <ErrorBoundary key="regex-inbox" noop>
+                    <InboxButton />
+                </ErrorBoundary>
+            </>
+        );
+    },
+
     start() {
+        inbox.load();
         FluxDispatcher.subscribe("MESSAGE_CREATE", onMessageCreate);
     },
 
